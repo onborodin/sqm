@@ -8,9 +8,9 @@ CREATE TABLE users (
     size int DEFAULT 0,
     quota int DEFAULT 10240
 );
-CREATE TABLE host (
-    user_id text unique NOT NULL PRIMARY KEY,
-    host text,
+CREATE TABLE hosts (
+    user_id int NOT NULL,
+    name text PRIMARY KEY,
     size int
 );
 COMMIT;

@@ -9,7 +9,7 @@ my %user;
 my %host;
 
 my $tmpl = '^access.log';
-my $dir = '/data/squid/log/';
+my $dir = '/var/log/squid';
 
 my $time = time;
 my ($sec, $min, $hour, $day, $month, $year) = (localtime($time))[0,1,2,3,4,5];
@@ -53,19 +53,20 @@ while (my $file = readdir $dh) {
 
 #print dumper \%user;
 
-foreach my $name (sort keys %user) {
-    my $total_size = int($user{$name}{size}/(1024*1024)+0.5);
-    foreach my $host (keys %{$user{$name}{host}}) {
-        my $size = $user{$name}{host}{$host};
-        print "$name $host $size\n";
-    }
+
+
+#foreach my $name (sort keys %user) {
+#    my $total_size = int($user{$name}{size}/(1024*1024)+0.5);
+#    foreach my $host (keys %{$user{$name}{host}}) {
+#        my $size = $user{$name}{host}{$host};
+#        print "$name $host $size\n";
+#    }
 
 #    print "$name $size\n";
 #    foreach my $host (keys %{$user{host}}) {
 #        my $size = $user{$name}{host}{$host};
 #        print "$name  $host   $size\n";
 #    }
-
 
 }
 

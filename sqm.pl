@@ -216,6 +216,105 @@ sub do {
 
 1;
 
+
+#---------------
+#--- COUNTER ---
+#---------------
+
+package aCounter;
+
+use strict;
+use warnings;
+use Digest::SHA qw(sha512_base64);
+use Mojo::Util qw(dumper);
+use Time::Local;
+
+sub new {
+    my ($class, $db, $logdir, $logtmpl) = @_;
+    my $self = {
+        db => $db,
+        logdir => $logdir,
+        logtmpl => $logtmpl
+    };
+    bless $self, $class;
+    return $self;
+}
+
+sub db {
+    my ($self, $db) = @_;
+    return $self->{db} unless $db;
+    $self->{db} = $db;
+    $self;
+}
+
+sub logdir {
+    my ($self, $logdir) = @_;
+    return $self->{logdir} unless $logdir;
+    $self->{logdir} = $logdir;
+    $self;
+}
+
+sub logtmpl {
+    my ($self, $logtmpl) = @_;
+    return $self->{logtmpl} unless $logtmpl;
+    $self->{logtmpl} = $logtmpl;
+    $self;
+}
+
+sub count {
+    my $self = shift;
+
+    my %user;
+    my %host;
+
+    my $tmpl = '^access.log';
+    my $dir = '/var/log/squid';
+
+    my $time = time;
+    my ($sec, $min, $hour, $day, $month, $year) = (localtime($time))[0,1,2,3,4,5];
+    $year += 1900;
+    my $begin = timelocal(0, 0, 0, 1, $month, $year);
+
+    opendir(my $dh, $dir);
+
+    while (my $file = readdir $dh) {
+        next if $file eq '.';
+        next if $file eq '..';
+
+        next unless $file =~ /$tmpl/;
+
+        open my $fh, '<', "$dir/$file" or next;
+
+        while (my $line = readline $fh) {
+            my ($time, $code, $source, $mode, $size, $req, $url, $user) = split(/\s+/, $line);
+            next unless $user;
+            next if $user eq '-';
+
+            $time = int($time);
+            next if $time < $begin;
+
+            my $str = localtime(int($time));
+
+            $user{$user}{size} += int($size/(1024)+0.5);
+            $user{$user}{source}{$source} = 1;
+            my $host = $url;
+            $host =~ s,^http://,,;
+            $host =~ s,^https://,,;
+            $host =~ s,^ftp://,,;
+            ($host) = split /\//, $host;
+            ($host) = split /:/, $host;
+
+            $user{$user}{hosts}{$host}{size} += int($size/(1024)+0.5);
+#            $host{$host}{size} += int($size/(1024)+0.5);
+        }
+        close $fh;
+    }
+    \%user;
+}
+
+1;
+
+
 #------------
 #--- USER ---
 #------------
@@ -228,7 +327,9 @@ use Digest::SHA qw(sha512_base64);
 
 sub new {
     my ($class, $db) = @_;
-    my $self = { db => $db};
+    my $self = { 
+        db => $db
+    };
     bless $self, $class;
     return $self;
 }
@@ -294,6 +395,7 @@ sub user_update {
     my $gecos = $args{gecos} || $prof->{gecos};
     my $password = $args{password} || $prof->{password};
     my $hash = $prof->{hash};
+
     if ($args{password}) {
         my $salt = substr(sha512_base64(sprintf("%X", rand(2**31-1))), 4, 16);
         $hash = crypt($password,'$6$'.$salt.'$');
@@ -303,7 +405,6 @@ sub user_update {
 
     $args{size} ||= -1;
     my $size = $prof->{size};
-
     $size = $args{size} if $args{size} >= 0;
     $size ||= 0;
 
@@ -330,7 +431,38 @@ sub user_delete {
     $id;
 }
 
+# --- HOSTS INFO ---
 
+sub host_exist {
+    my ($self, $host, $user_id) = @_;
+    return undef unless $user_id;
+    my $res = $self->db->exec1("select * from hosts where name = '$host' and user_id = $user_id limit 1");
+    $res->{size};
+}
+
+sub host_clean {
+    my ($self, $user_id) = @_;
+    my $where = "where user_id = $user_id" if $user_id;
+    $where ||= '';
+    $self->db->do("delete from hosts $where");
+}
+
+sub host_update {
+    my ($self, $host, $user_id, $size) = @_;
+    return undef unless $host;
+    return undef unless $user_id;
+    $size ||= 0;
+    $self->host_delete($host, $user_id);
+    $self->db->do("insert into hosts (user_id, name, size)
+                              values ($user_id, '$host', $size)");
+}
+
+sub host_delete {
+    my ($self, $host, $user_id) = @_;
+    return undef unless $host;
+    return undef unless $user_id;
+    $self->db->do("delete from hosts where user_id = $user_id and name = '$host'");
+}
 
 1;
 
@@ -685,6 +817,15 @@ $app->helper(
         state $user = aUser->new($app->db); 
 });
 
+$app->helper(
+    counter => sub {
+        state $couner = aCounter->new($app->db,
+                                    $app->config('logpattern'),
+                                    $app->config('logdir')
+        );
+});
+
+
 $app->helper('reply.not_found' => sub {
         my $c = shift; 
         return $c->redirect_to('/login') unless $c->session('login'); 
@@ -835,6 +976,34 @@ $server->on(
         kill('INT', $pid);
     }
 );
+
+#my $bill = $app->counter->count;
+
+##$app->user->host_clean;
+
+#foreach my $name (keys %{$bill}) {
+#    my $size = $bill->{$name}{size};
+#    my $user_id = $app->user->user_exist($name);
+#    $app->user->user_update($user_id, size => $size);
+#    print "$name $size\n";
+#}
+
+#foreach my $name (keys %{$bill}) {
+#    my $user_id = $app->user->user_exist($name);
+#    next unless $user_id;
+#
+#    my $hosts = $bill->{$name}{hosts};
+#
+#    if ($user_id) {
+#        $app->user->host_clean($user_id);
+#        foreach my $host (keys %{$hosts}) {
+#            my $size = $hosts->{$host}->{size};
+#            $size ||= 0;
+#            $app->user->host_update($host, $user_id, $size);
+#            print "$user_id $host $size\n";
+#        }
+#    }
+#}
 
 $server->run;
 #EOF
