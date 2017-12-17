@@ -23,6 +23,7 @@
         <tr>
             <th>#</th>
             <th>login</th>
+            <th>gecos</th>
             <th><i class="fi-graph-pie"></i></th>
             <th><i class="fi-alert"></i></th>
             <th><i class="fi-address-book"></i></th>
@@ -36,6 +37,7 @@
         % foreach my $row (@$list) {
             % $n += 1;
             % my $name = $row->{name};
+            % my $gecos = $row->{gecos};
             % my $user_id = $row->{id};
             % my $domain_id = $row->{domain_id};
             % my $size = $row->{size} || 0;
@@ -43,6 +45,7 @@
             <tr>
                 <td><%= $n %></td>
                 <td><%= $name %></td>
+                <td><%= $gecos %></td>
                 <td><%= $size %></td>
                 <td><%= $quota %></td>
                 <td><a href="/user/rename/form?user_id=<%= $user_id %>"><i class="fi-address-book"></i></a></td>

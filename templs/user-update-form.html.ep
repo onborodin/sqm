@@ -25,9 +25,14 @@
             <form accept-charset="UTF-8" action="/user/update/handler" method="post" data-abide novalidate>
                 <h5 class="text-center">Edit user <%= $address %></h5>
                 <input type="hidden" name="user_id" value="<%= $user_id %>"/>
-                <label>Password
-                    <input type="text" value="<%= $password %>" name="password" required pattern="[_.#,a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{6,42}"/>
+                <label>Gecos
+                    <input type="text" value="<%= $gecos %>" name="gecos" required pattern="[ _.#:@!,/;-=,a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{6,42}"/>
                     <span class="form-error">Mandatory, 6 or more letter</span>
+                </label>
+                <label>Password
+                    <input type="text" name="password" value="<%= password %>" required pattern="[3_.-zA-Z0-9]{5,42}"/>
+                    <span class="form-error">Mandatory, 6 or more latin letter or _.#</span>
+                </label>
                 </label>
                 <label>Quota
                     <input type="number" name="quota" value="<%= $quota %>" required pattern="[0-9]{1,15}"/>

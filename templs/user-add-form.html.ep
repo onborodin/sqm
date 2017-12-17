@@ -16,7 +16,7 @@
         <form accept-charset="UTF-8" action="/user/add/handler" method="post" data-abide novalidate>
             <h5 class="text-center">Add user</h5>
             <label>Gecos
-                <input type="text" name="gecos" placeholder="First Name, Room, Phone" required pattern="[_.,:#@()-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{6,42}"/>
+                <input type="text" name="gecos" placeholder="First Name, Room, Phone" required pattern="[ _.,:#@()-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{6,42}"/>
                 <span class="form-error">Mandatory, 6 or more letter</span>
             </label>
             <label>Username
@@ -24,8 +24,8 @@
                 <span class="form-error">Mandatory, 2 or more letter</span>
             </label>
             <label>Password
-                <input type="text" name="password" placeholder="xxxxxxxxx" required pattern="[_.-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{5,42}"/>
-                <span class="form-error">Mandatory, 6 or more letter</span>
+                <input type="text" name="password" placeholder="xxxxxxxxx" required pattern="[3_.-zA-Z0-9]{5,42}"/>
+                <span class="form-error">Mandatory, 6 or more latin letter or _.#</span>
             </label>
 
             <label>Quota

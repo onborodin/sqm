@@ -20,7 +20,7 @@
     % my $address = $profile->{address};
     % my $quota = $quota || $profile->{quota};
 
-    % my $res = $u->user_update($user_id, password => $password, quota => $quota);
+    % my $res = $u->user_update($user_id, password => $password, gecos => $gecos, quota => $quota);
     % if ($res) {
         <div class="callout success">User <%= $address %> has been updated.</div>
     % }
