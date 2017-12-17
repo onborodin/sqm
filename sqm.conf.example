@@ -1,0 +1,10 @@
+#
+# $id$
+#
+loglevel = debug
+dbname = sqm
+dbhost = 127.0.0.1
+dblogin = sqm
+dbpassword = password
+dbengine = postgres
+#EOF

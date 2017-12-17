@@ -1,0 +1,12 @@
+[Unit]
+Description=sqm
+
+[Service]
+Type=forking
+PIDFile=@APP_RUNDIR@/sqm.pid
+ExecStart=@prefix@/sbin/sqm
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+
