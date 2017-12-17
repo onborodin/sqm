@@ -239,6 +239,7 @@ Mojo::Util
 AC_OUTPUT([
 Makefile
 sqm:sqm.pl
+sqm-helper:sqm-helper.pl
 sqm.service
 rc.d/sqm
 init.d/sqm

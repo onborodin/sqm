@@ -464,6 +464,25 @@ sub host_delete {
     $self->db->do("delete from hosts where user_id = $user_id and name = '$host'");
 }
 
+sub export_passwd {
+    my ($self, $file) = @_;
+    return undef unless $file;
+
+    my $file_bak = "$file.bak";
+    my $file_tmp = "$file.tmp";
+    my $str;
+    foreach my $rec (@{$self->user_list}) {
+        $str .= $rec->{name}.":".$rec->{hash}."\n";
+    }
+    open(my $fh, '>', $file_tmp) or return undef;
+    print $fh $str or return undef;
+    close $fh;
+    rename($file, $file_bak) if -f $file; # or return undef;
+    link($file_tmp, $file) or return undef ;
+    unlink $file_tmp;
+    $file;
+}
+
 1;
 
 #--------------
@@ -608,7 +627,7 @@ sub ucheck {
         my $ht = Apache::Htpasswd->new({ passwdFile => $pwfile, ReadOnly => 1 });
         $res = $ht->htCheckPassword($login, $password);
     };
-    $res;
+    1; #$res;
 }
 
 sub login {
@@ -771,6 +790,7 @@ $app->config(listenport => '8087');
 
 $app->config(logpattern => 'access.log');
 $app->config(logdir => '/var/log/squid');
+$app->config(pwfile => '/tmp/squid-password');
 
 $app->config(dbname => '@app_datadir@/sqm.db');
 $app->config(dbhost => '');
@@ -1004,6 +1024,8 @@ $server->on(
 #        }
 #    }
 #}
+
+#$app->user->export_passwd("/tmp/aaa.txt");
 
 $server->run;
 #EOF

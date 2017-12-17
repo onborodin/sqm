@@ -101,7 +101,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES = sqm sqm.service rc.d/sqm init.d/sqm
+CONFIG_CLEAN_FILES = sqm sqm-helper sqm.service rc.d/sqm init.d/sqm
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -156,10 +156,10 @@ am__can_run_installinfo = \
   esac
 DATA = $(dist_conf_DATA) $(nobase_dist_pkgdata_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/sqm.pl \
-	$(srcdir)/sqm.service.in $(top_srcdir)/init.d/sqm.in \
-	$(top_srcdir)/rc.d/sqm.in config.guess config.sub install-sh \
-	missing
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/sqm-helper.pl \
+	$(srcdir)/sqm.pl $(srcdir)/sqm.service.in \
+	$(top_srcdir)/init.d/sqm.in $(top_srcdir)/rc.d/sqm.in \
+	config.guess config.sub install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -285,7 +285,7 @@ EXTRA_DIST = \
 
 @FREEBSD_OS_TRUE@etcdir = @prefix@/etc
 @FREEBSD_OS_TRUE@nobase_etc_SCRIPTS = rc.d/sqm
-sbin_SCRIPTS = sqm
+sbin_SCRIPTS = sqm sqm-helper
 confdir = @APP_CONFDIR@
 dist_conf_DATA = \
 	sqm.pw.example \
@@ -381,6 +381,8 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 sqm: $(top_builddir)/config.status $(srcdir)/sqm.pl
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+sqm-helper: $(top_builddir)/config.status $(srcdir)/sqm-helper.pl
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 sqm.service: $(top_builddir)/config.status $(srcdir)/sqm.service.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@

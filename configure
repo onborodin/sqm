@@ -2879,7 +2879,7 @@ $as_echo "ok" >&6; };
 fi
 done
 
-ac_config_files="$ac_config_files Makefile sqm:sqm.pl sqm.service rc.d/sqm init.d/sqm"
+ac_config_files="$ac_config_files Makefile sqm:sqm.pl sqm-helper:sqm-helper.pl sqm.service rc.d/sqm init.d/sqm"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3624,6 +3624,7 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "sqm") CONFIG_FILES="$CONFIG_FILES sqm:sqm.pl" ;;
+    "sqm-helper") CONFIG_FILES="$CONFIG_FILES sqm-helper:sqm-helper.pl" ;;
     "sqm.service") CONFIG_FILES="$CONFIG_FILES sqm.service" ;;
     "rc.d/sqm") CONFIG_FILES="$CONFIG_FILES rc.d/sqm" ;;
     "init.d/sqm") CONFIG_FILES="$CONFIG_FILES init.d/sqm" ;;

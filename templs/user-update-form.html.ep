@@ -30,7 +30,7 @@
                     <span class="form-error">Mandatory, 6 or more letter</span>
                 </label>
                 <label>Password
-                    <input type="text" name="password" value="<%= password %>" required pattern="[3_.-zA-Z0-9]{5,42}"/>
+                    <input type="text" name="password" value="<%= $password %>" required pattern="[3_.-zA-Z0-9]{5,42}"/>
                     <span class="form-error">Mandatory, 6 or more latin letter or _.#</span>
                 </label>
                 </label>

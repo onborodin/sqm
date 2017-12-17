@@ -21,7 +21,7 @@ etcdir = @prefix@/etc
 nobase_etc_SCRIPTS = rc.d/sqm
 endif
 
-sbin_SCRIPTS = sqm
+sbin_SCRIPTS = sqm sqm-helper
 
 confdir = @APP_CONFDIR@
 dist_conf_DATA = \
