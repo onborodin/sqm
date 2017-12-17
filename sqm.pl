@@ -300,17 +300,21 @@ sub user_update {
     }
 
     my $quota = $args{quota} || $prof->{quota};
+
+    $args{size} ||= -1;
     my $size = $prof->{size};
+
     $size = $args{size} if $args{size} >= 0;
     $size ||= 0;
 
-    $self->db->do("update users set name = '$name',
+    my $q = "update users set name = '$name',
                                 password = '$password',
                                 gecos = '$gecos',
                                 size = $size,
                                 quota = $quota,
                                 hash = '$hash'
-                            where id = $id");
+                            where id = $id";
+    $self->db->do($q);
     my $res = $self->user_profile($id);
     return undef unless $res->{name} eq $name;
     return undef unless $res->{password} eq $password;
