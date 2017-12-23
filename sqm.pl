@@ -55,7 +55,7 @@ sub read {
 #--- DB ---
 #----------
 
-package aDB;
+package aDBI;
 
 use strict;
 use warnings;
@@ -788,7 +788,7 @@ $app->config(listenaddr4 => '0.0.0.0');
 $app->config(listenaddr6 => '[::]');
 $app->config(listenport => '8087');
 
-$app->config(logpattern => 'access.log');
+$app->config(logpattern => 'access');
 $app->config(logdir => '/var/log/squid');
 $app->config(pwfile => '/tmp/squid-password');
 
@@ -803,8 +803,9 @@ $app->config(group => $group || '@app_group@');
 
 if (-r $app->config('conffile')) {
     $app->log->debug("Load configuration from ".$app->config('conffile'));
-#    $app->plugin('JSONConfig', { file => $app->config('conffile') });
+
     my $c = aConfig->new($app->config('conffile'));
+
     my $hash = $c->read;
     foreach my $key (keys %$hash) {
         $app->config($key => $hash->{$key});
@@ -823,7 +824,7 @@ $app->helper(
     db => sub {
         my $engine = 'SQLite' if $app->config('dbengine') =~ /sqlite/i;
         $engine = 'Pg' if $app->config('dbengine') =~ /postgres/i;
-        state $db = aDB->new(
+        state $db = aDBI->new(
             database => $app->config('dbname'),
             host => $app->config('dbhost'),
             login => $app->config('dblogin'),
@@ -918,10 +919,12 @@ $server->heartbeat_timeout(60);
 #--------------
 
 unless ($nofork) {
-    my $d = Daemon->new;
     my $user = $app->config('user');
     my $group = $app->config('group');
+    my $d = Daemon->new($user, $group);
+
     $d->fork;
+
     $app->log(Mojo::Log->new(
                 path => $app->config('logfile'),
                 level => $app->config('loglevel')
@@ -974,6 +977,16 @@ $sub->run(
         my $loop = Mojo::IOLoop->singleton;
         my $id = $loop->recurring(
             300 => sub {
+		$app->log->info('Begin count');
+		my $bill = $app->counter->count;
+		$app->user->host_clean;
+		foreach my $name (keys %{$bill}) {
+		    my $size = $bill->{$name}{size};
+		    my $user_id = $app->user->user_exist($name);
+		    $app->log->debug("Count user=$name user_id=$user_id size=$size");
+		    $app->user->user_update($user_id, size => $size) if $user_id;
+		}
+		$app->log->info('Done count');
             }
         );
         $loop->start unless $loop->is_running;
@@ -994,6 +1007,8 @@ $server->on(
         my ($prefork, $graceful) = @_;
         $app->log->info("Subrocess $pid stop");
         kill('INT', $pid);
+        sleep 1;
+        kill('KILL', $pid);
     }
 );
 
