@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Mojo::Util qw(b64_decode dumper);
+use Mojo::Util qw(b64_decode dumper camelize);
 use Digest::SHA qw(sha512_base64);
 
 
@@ -42,10 +42,15 @@ foreach my $login (keys %user) {
     my $new_salt = substr(sha512_base64(sprintf("%X", rand(2**31-1))), 4, 16);
     my $new_hash = crypt($password,'$6$'.$new_salt.'$');
 
+    
+    my $gecos = $login;
+    $gecos =~ s/_/__/g;
+    $gecos = camelize $gecos;
+
     $password = 'xxxxxxx' if $hash ne $new;
     $new_hash = $hash if $hash ne $new;
 
-    print "insert into users (id, name, password, gecos, hash, quota) values ($num, '$login', '$password', '', '$new_hash', 10240);\n";
+    print "insert into users (id, name, password, gecos, hash, quota) values ($num, '$login', '$password', '$gecos', '$new_hash', 10240);\n";
 #    print "login=$login \t password=$password \t hash=$new_hash\n" if $hash eq $new;
 #    print "login=$login \t password='xxxxxx' \t hash=$hash\n" if $hash ne $new;
     $num += 1;
