@@ -1,0 +1,10 @@
+Makefile
+autom4te.cache
+config.log
+config.status
+init.d/sqm
+rc.d/sqm
+sqm
+sqm-helper
+sqm.service
+*~
