@@ -982,7 +982,7 @@ $sub->run(
         my $subproc = shift;
         my $loop = Mojo::IOLoop->singleton;
         my $id = $loop->recurring(
-            300 => sub {
+            3600 => sub {
 		$app->log->info('Begin count');
 		my $bill = $app->counter->count;
 		$app->user->host_clean;
