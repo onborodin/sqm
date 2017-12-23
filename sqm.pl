@@ -56,7 +56,7 @@ sub read {
 1;
 
 #----------
-#--- DB ---
+#--- aDBI ---
 #----------
 
 package aDBI;
@@ -277,6 +277,8 @@ sub count {
     my $time = time;
     my ($sec, $min, $hour, $day, $month, $year) = (localtime($time))[0,1,2,3,4,5];
     $year += 1900;
+
+    # Start time is 1th day of month
     my $begin = timelocal(0, 0, 0, 1, $month, $year);
 
     opendir(my $dh, $dir);
