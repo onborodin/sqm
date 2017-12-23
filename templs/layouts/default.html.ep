@@ -29,7 +29,6 @@
                 <ul class="dropdown menu" data-dropdown-menu>
                     <li class="menu-text">SQM</li>
                     <li><a href="/user/list">Users</a></li>
-                    <li><a href="/sqlog">Log</a></li>
                     <li><a href="/logout"><i class="fi-arrow-right"></i></a></li>
                 </ul>
             </div>

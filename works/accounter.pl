@@ -53,14 +53,12 @@ while (my $file = readdir $dh) {
 
 #print dumper \%user;
 
-
-
-#foreach my $name (sort keys %user) {
-#    my $total_size = int($user{$name}{size}/(1024*1024)+0.5);
-#    foreach my $host (keys %{$user{$name}{host}}) {
-#        my $size = $user{$name}{host}{$host};
-#        print "$name $host $size\n";
-#    }
+foreach my $name (sort keys %user) {
+    my $total_size = int($user{$name}{size}/(1024*1024)+0.5);
+    foreach my $host (keys %{$user{$name}{host}}) {
+        my $size = $user{$name}{host}{$host};
+        print "$name $host $size\n";
+    }
 
 #    print "$name $size\n";
 #    foreach my $host (keys %{$user{host}}) {

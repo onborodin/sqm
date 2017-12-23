@@ -55,7 +55,7 @@ sub read {
 #--- DB ---
 #----------
 
-package aDB;
+package aDBI;
 
 use strict;
 use warnings;
@@ -297,7 +297,7 @@ if (-r $config->{conffile}) {
 my $engine = 'SQLite' if $config->{dbengine} =~ /sqlite/i;
 $engine = 'Pg' if $config->{dbengine} =~ /postgres/i;
 
-my $dbi = aDB->new(
+my $dbi = aDBI->new(
             database => $config->{dbname},
             host => $config->{dbhost},
             login => $config->{dblogin},
