@@ -61,6 +61,7 @@
 $.extend(true, $.fn.dataTable.defaults, {
     "searching": true,
     "ordering": true,
+    "lengthMenu": [ [10, 25, 50,100, -1], [10, 25, 50,100, "All"] ], 
     "language": {
         "search": "",
         "lengthMenu": "_MENU_",
