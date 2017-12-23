@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.am 633 2017-04-15 13:51:07Z ziggi $
+# $Id$
 #
 AUTOMAKE_OPTIONS = foreign no-dependencies no-installinfo
 
@@ -75,7 +75,6 @@ nobase_dist_pkgdata_DATA = \
 	templs/exception.development.html.ep \
 	templs/exception.production.html.ep \
 	templs/hello.html.ep \
-	templs/sqlog.html.ep \
 	templs/layouts/default.html.ep \
 	templs/not_found.development.html.ep \
 	templs/not_found.production.html.ep \
