@@ -1,5 +1,9 @@
 #!@perl@
 
+#
+# $Id$
+#
+
 package aConfig;
 
 use strict;
