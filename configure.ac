@@ -1,4 +1,4 @@
-AC_INIT(sqm.pl,0.04)
+AC_INIT(sqm.pl,0.01)
 
 AM_INIT_AUTOMAKE
 AC_PREFIX_DEFAULT(/usr/local)
