@@ -18,7 +18,7 @@ command_interpreter="@perl@"
 
 load_rc_config ${name}
 
-: ${pgagent_enable:="NO"}
+: ${sqm_enable:="NO"}
 
 run_rc_command "$1"
 #EOF
